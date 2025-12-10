@@ -9,7 +9,6 @@ import java.time.LocalTime;
 public class Coureurs extends Personne {
     private LocalTime temps;
     private Categorie categorie;
-
     public Coureurs(Genre genre, String nom , String prenom , Categorie categorie, LocalTime temps ) {
         setGenre(genre);
         setNom(nom);
@@ -17,15 +16,6 @@ public class Coureurs extends Personne {
         setTemps(temps);
         setCategorie(categorie);
     }
-    public Coureurs(String civilite, String nom, String prenom, String categorie, int temps) {
-        setGenre(Genre.valueOf(civilite.trim().toUpperCase()));
-        setNom(nom);
-        setPrenom(prenom);
-        setCategorie(Categorie.valueOf(categorie.trim().toUpperCase()));
-        setTemps(LocalTime.ofSecondOfDay(temps));
-    }
-
-
     public LocalTime getTemps() {
         return temps;
     }
@@ -43,8 +33,15 @@ public class Coureurs extends Personne {
     }
     @Override
     public String toString() {
-        return String.format("%s, %s %s, Categorie: %s, Temps: %s",
-                getGenre(), getNom(), getPrenom(), getCategorie(), getTemps()
+        // Ajout du formatage du temps pour un affichage en HH:MM:SS
+        long secondes = temps.toSecondOfDay();
+        long h = secondes / 3600;
+        long m = (secondes % 3600) / 60;
+        long s = secondes % 60;
+        String tempsFormatte = String.format("%02d:%02d:%02d", h, m, s);
+
+        return String.format("%s, %s %s, Catégorie: %s, Temps: %s (%d secondes)",
+                getGenre(), getNom(), getPrenom(), getCategorie(), tempsFormatte, secondes
         );
     }
 }

@@ -1,5 +1,6 @@
 package fr.btsciel;
 
+import java.time.Duration;
 import java.time.LocalTime;
 import java.util.*;
 import java.io.*;
@@ -70,6 +71,12 @@ public class GestionDesCoureurs {
         }
     }
 
+    public void reinitialiserListe(String cheminFichier) {
+        coureurs.clear();
+        lireFichier(cheminFichier);
+        System.out.println("La liste des coureurs a été réinitialisée à l'ordre du fichier.");
+    }
+
     public void trierParNomCroissant() {
         coureurs.sort(Comparator.comparing(Coureurs::getNom));
     }
@@ -101,5 +108,15 @@ public class GestionDesCoureurs {
             System.err.println("Index de coureur invalide pour la modification.");
         }
     }
-    
+
+    public long calculerDifferenceTemps(int indexCoureur1, int indexCoureur2) {
+        if (indexCoureur1 < 0 || indexCoureur1 >= coureurs.size() ||
+                indexCoureur2 < 0 || indexCoureur2 >= coureurs.size()) {
+            return Long.MIN_VALUE;
+        }
+        Coureurs c1 = coureurs.get(indexCoureur1);
+        Coureurs c2 = coureurs.get(indexCoureur2);
+        Duration difference = Duration.between(c1.getTemps(), c2.getTemps());
+        return difference.getSeconds();
+    }
 }
