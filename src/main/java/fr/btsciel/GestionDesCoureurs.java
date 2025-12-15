@@ -70,13 +70,10 @@ public class GestionDesCoureurs {
             coureurs.remove(index);
         }
     }
-
     public void reinitialiserListe(String cheminFichier) {
         coureurs.clear();
         lireFichier(cheminFichier);
-        System.out.println("La liste des coureurs a été réinitialisée à l'ordre du fichier.");
     }
-
     public void trierParNomCroissant() {
         coureurs.sort(Comparator.comparing(Coureurs::getNom));
     }

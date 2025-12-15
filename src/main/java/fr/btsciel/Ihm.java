@@ -2,7 +2,10 @@ package fr.btsciel;
 
 import clavier.In;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.LocalTime;
+import java.util.List;
 
 public class Ihm {
     private GestionDesCoureurs gestion = new GestionDesCoureurs();
@@ -21,7 +24,7 @@ public class Ihm {
     private void afficherMenu() {
         System.out.println("\n--- MENU COUREURS ---");
         System.out.println("1 - Afficher par nom croissant");
-        System.out.println("2 - Afficher par nom décroissant");
+        System.out.println("2 - Afficher par nom decroissant");
         System.out.println("3 - Afficher par prenom croissant");
         System.out.println("4 - Afficher par prenom décroissant");
         System.out.println("5 - Afficher par classement (temps croissant)");
@@ -30,7 +33,7 @@ public class Ihm {
         System.out.println("8 - Supprimer un coureur");
         System.out.println("9 - Sauvegarder dans le fichier");
         System.out.println("10 - Modifier un coureur");
-        System.out.println("11 - Réinitialiser la liste (ordre du fichier)");
+        System.out.println("11 - Reinitialiser la liste (ordre du fichier)");
         System.out.println("12 - Comparer des coureurs");
         System.out.println("0 - Quitter");
         System.out.print("Votre choix : ");
@@ -89,11 +92,11 @@ public class Ihm {
             case 11:
                 gestion.reinitialiserListe("course.txt");
                 afficherListe();
+                System.out.println("La liste des coureurs a été réinitialisée à l'ordre du fichier.");
                 break;
             case 12 :
-                gestion.calculerDifferenceTemps();
-
-
+                CalculerEtAfficherDifference();
+                break;
             case 0:
                 System.out.println("Au revoir !");
                 break;
@@ -119,7 +122,7 @@ public class Ihm {
     private Genre saisirGenre() {
         Genre genre = null;
         while (genre == null) {
-            System.out.println("Choix Civilité :");
+            System.out.println("Choix Civilite :");
             System.out.println("1 - Femme (F)");
             System.out.println("2 - Homme (M)");
             System.out.print("Votre choix (1 ou 2) : ");
@@ -146,7 +149,7 @@ public class Ihm {
         int maxChoix = toutesCategories.length;
 
         while (categorie == null) {
-            System.out.println("Choix Catégorie :");
+            System.out.println("Choix Categorie :");
             for (int i = 0; i < maxChoix; i++) {
                 System.out.println((i + 1) + " - " + toutesCategories[i]);
             }
@@ -181,7 +184,7 @@ public class Ihm {
 
         Coureurs c = new Coureurs(genre, nom, prenom, categorie, LocalTime.ofSecondOfDay(temps));
         gestion.ajouterCoureur(c);
-        System.out.println("\nCoureur ajouté.");
+        System.out.println("\nCoureur ajoute.");
     }
 
     private void supprimerCoureurDepuisSaisie() {
@@ -192,7 +195,7 @@ public class Ihm {
         int index = In.readInteger();
         System.out.println("DEBUG : Tentative de suppression de l'index " + index + ".");
         gestion.supprimerCoureur(index);
-        System.out.println("Coureur supprimé (si l'index était valide).");
+        System.out.println("Coureur supprime (si l'index etait valide).");
     }
 
     private void modifierCoureurDepuisSaisie() {
@@ -202,7 +205,7 @@ public class Ihm {
         }
 
         afficherListe();
-        System.out.print("Index du coureur à modifier : ");
+        System.out.print("Index du coureur a modifier : ");
         int index = In.readInteger();
 
         if (index < 0 || index >= gestion.getCoureurs().size()) {
@@ -216,7 +219,7 @@ public class Ihm {
         System.out.print("Nouveau Nom : ");
         String nouveauNom = In.readString();
 
-        System.out.print("Nouveau Prénom : ");
+        System.out.print("Nouveau Prenom : ");
         String nouveauPrenom = In.readString();
 
         Categorie nouvelleCategorie = saisirCategorie();
@@ -233,13 +236,13 @@ public class Ihm {
         );
 
         gestion.modifierCoureur(index, cModifie);
-        System.out.println("\nCoureur modifié avec succès.");
+        System.out.println("\nCoureur modifié avec succes.");
     }
 
     private void sauvegarder() {
         try {
             gestion.sauvegarderdansFichier("course.txt");
-            System.out.println("Sauvegarde effectuée.");
+            System.out.println("Sauvegarde effectuee.");
         } catch (IOException e) {
             System.out.println("Erreur de sauvegarde : " + e.getMessage());
         }
@@ -255,7 +258,38 @@ public class Ihm {
         long secondes = totalSecondes % 60;
         return String.format("%s%02d:%02d:%02d", signe, heures, minutes, secondes);
     }
+    private void CalculerEtAfficherDifference(){
+        if (gestion.getCoureurs().size() <2 ){
+            System.out.println("Il faut au moins 2 coureurs pour calculer une difference");
+            return;
+        }
+        afficherListe();
+        System.out.println("Index du 1er Coureur :");
+        int index1 = In.readInteger();
+        System.out.println("Index du 2eme Coureur :");
+        int index2 = In.readInteger();
 
+        if (index1 < 0  || index2 >= gestion.getCoureurs().size() || index2 < 0 || index2 >= gestion.getCoureurs().size()) {
+            System.out.println("Index invalide. Retour au menu.");
+        }
+        long Differenceseconde = gestion.calculerDifferenceTemps(index1, index2);
+        Coureurs c1 =  gestion.getCoureurs().get(index1);
+        Coureurs c2 =  gestion.getCoureurs().get(index2);
+
+        String ecartFormatee = formaterEcartTemps(Differenceseconde);
+
+        System.out.println("\n Resultat de la comparaison");
+        System.out.println("Coureur 1 (Reference): " + c1.getNom() + " " + c1.getPrenom() + " (" + c1.getTemps() + ")");
+        System.out.println("Coureur 2 (Compare):   " + c2.getNom() + " " + c2.getPrenom() + " (" + c2.getTemps() + ")");
+        System.out.println("Ecart (Coureur 2 - Coureur 1): " + ecartFormatee);
+
+        if (Differenceseconde > 0){
+            System.out.println(c2.getPrenom() + " a termine APRES " + c1.getPrenom() + ".");
+        } else if (Differenceseconde < 0) {
+            System.out.println(c1.getPrenom() + "a termine AVANT " + c2.getPrenom() + ".");
+        } else
+            System.out.println("les deux coureurs on finit en meme temps");
+    }
 
     public static void main(String[] args) {
         new Ihm().start();
