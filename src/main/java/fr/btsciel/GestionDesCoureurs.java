@@ -1,5 +1,6 @@
 package fr.btsciel;
 
+import java.nio.file.Path;
 import java.time.Duration;
 import java.time.LocalTime;
 import java.util.*;
@@ -54,7 +55,19 @@ public class GestionDesCoureurs {
                     + "," + c.getTemps().toSecondOfDay());
             bw.newLine();
         }
-        bw.close();
+
+        try (DataOutputStream dos = new DataOutputStream(new FileOutputStream("course.bin"))) {
+            for (Coureurs c : coureurs) {
+                dos.writeUTF(c.getGenre().name());
+                dos.writeUTF(c.getNom());
+                dos.writeUTF(c.getPrenom());
+                dos.writeUTF(c.getCategorie().name());
+                dos.writeLong(c.getTemps().toSecondOfDay());
+
+                bw.close();
+            }
+        }
+
     }
 
     public List<Coureurs> getCoureurs() {

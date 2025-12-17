@@ -12,7 +12,6 @@ public class Ihm {
 
     private void start() {
         gestion.lireFichier("course.txt");
-
         int choix;
         do {
             afficherMenu();
