@@ -48,14 +48,14 @@ public class GestionDesCoureurs {
     }
 
     public void sauvegarderdansFichier(String chemin) throws IOException {
-        BufferedWriter bw = new BufferedWriter(new FileWriter(chemin));
+        Obje bw = new BufferedWriter(new FileWriter(chemin));
         for (Coureurs c : coureurs) {
             bw.write(c.getGenre() + "," + c.getNom() + ","
                     + c.getPrenom() + "," + c.getCategorie()
                     + "," + c.getTemps().toSecondOfDay());
             bw.newLine();
         }
-
+D
         try (DataOutputStream dos = new DataOutputStream(new FileOutputStream("course.bin"))) {
             for (Coureurs c : coureurs) {
                 dos.writeUTF(c.getGenre().name());
@@ -63,6 +63,7 @@ public class GestionDesCoureurs {
                 dos.writeUTF(c.getPrenom());
                 dos.writeUTF(c.getCategorie().name());
                 dos.writeLong(c.getTemps().toSecondOfDay());
+                dos.writeo
 
                 bw.close();
             }
